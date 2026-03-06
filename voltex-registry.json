@@ -3,12 +3,7 @@
     "description": "Official sample plugins for the Voltex waveform viewer",
     "plugins": [
         {
-            "name": "@voltex/notepad",
-            "displayName": "Notepad",
-            "version": "1.0.0",
-            "description": "A simple notepad sidebar for jotting notes while analysing signals",
-            "author": "EUdds",
-            "main": "plugins/notepad/index.js"
+            "path": "plugins/notepad"
         }
     ]
 }
