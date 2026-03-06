@@ -1,0 +1,12 @@
+{
+    "name": "voltex-sample-plugins",
+    "private": true,
+    "scripts": {
+        "build": "node build.mjs",
+        "build:watch": "node build.mjs --watch"
+    },
+    "devDependencies": {
+        "@voltex-viewer/plugin-api": "^0.3.0",
+        "esbuild": "^0.25.0"
+    }
+}
