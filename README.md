@@ -1,6 +1,6 @@
 # Voltex Sample Plugins
 
-Official sample plugin registry for the [Voltex](https://github.com/EUdds/voltex) waveform viewer.
+Template for creating your own voltex viewer plugin registry
 
 ## Installing in Voltex
 
