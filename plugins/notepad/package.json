@@ -3,5 +3,8 @@
     "displayName": "Notepad",
     "version": "1.0.0",
     "description": "A simple notepad sidebar for jotting notes while analysing signals",
-    "author": "Eric Udlis"
+    "author": "Eric Udlis",
+    "type": "module",
+    "main": "dist/index.js",
+    "license": "MIT"
 }

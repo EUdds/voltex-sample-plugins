@@ -1,33 +1,46 @@
-import { build, context } from 'esbuild';
+import { build } from 'vite';
 import { readdirSync, existsSync } from 'fs';
-import { join } from 'path';
+import { join, resolve } from 'path';
+import { execSync } from 'child_process';
 
 const watch = process.argv.includes('--watch');
-
 const pluginsDir = 'plugins';
-const entryPoints = readdirSync(pluginsDir)
-    .map(name => join(pluginsDir, name, 'src', 'index.ts'))
-    .filter(p => existsSync(p));
 
-const options = {
-    entryPoints,
-    bundle: true,
-    format: 'esm',
-    // Output each plugin's index.js next to its src/ folder
-    outbase: pluginsDir,
-    outdir: pluginsDir,
-    // Strip the src/ segment: plugins/notepad/src/index.ts -> plugins/notepad/index.js
-    entryNames: '[dir]/../index',
-    external: [],
-    minify: false,
-    sourcemap: false,
-};
+const pluginNames = readdirSync(pluginsDir)
+    .filter(name => existsSync(join(pluginsDir, name, 'src', 'index.ts')));
 
-if (watch) {
-    const ctx = await context(options);
-    await ctx.watch();
-    console.log('Watching for changes...');
-} else {
-    await build(options);
-    console.log('Built:', entryPoints.join(', '));
+if (pluginNames.length === 0) {
+    console.log('No plugins found.');
+    process.exit(0);
+}
+
+// Type check before building
+console.log('Type checking...');
+execSync('npx tsc --noEmit', { stdio: 'inherit' });
+
+for (const pluginName of pluginNames) {
+    const entry = resolve(pluginsDir, pluginName, 'src', 'index.ts');
+    const outDir = resolve(pluginsDir, pluginName, 'dist');
+
+    await build({
+        build: {
+            lib: {
+                entry,
+                fileName: () => 'index.js',
+                formats: ['es'],
+            },
+            outDir,
+            emptyOutDir: true,
+            minify: 'terser',
+            watch: watch ? {} : undefined,
+            rollupOptions: {
+                // @voltex-viewer/plugin-api types are erased at compile time;
+                // no runtime imports needed.
+                external: [],
+            },
+        },
+        logLevel: 'info',
+    });
+
+    console.log(`Built: ${pluginName} -> ${pluginName}/dist/index.js`);
 }

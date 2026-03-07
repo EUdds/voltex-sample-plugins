@@ -3,7 +3,8 @@
     "description": "Official sample plugins for the Voltex waveform viewer",
     "plugins": [
         {
-            "path": "plugins/notepad"
+            "path": "plugins/notepad",
+            "main": "dist/index.js"
         }
     ]
 }
