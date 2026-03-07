@@ -25,10 +25,34 @@ jobs:
 
       - run: npm run build
 
-      - name: Commit built files
+      - name: Inject integrity hashes into voltex-registry.json
+        run: |
+          node -e "
+          const { createHash } = require('crypto');
+          const { readFileSync, writeFileSync, existsSync } = require('fs');
+
+          const registry = JSON.parse(readFileSync('voltex-registry.json', 'utf8'));
+
+          for (const plugin of registry.plugins) {
+            const mainFile = plugin.main ?? 'index.js';
+            const filePath = \`\${plugin.path}/\${mainFile}\`;
+            if (existsSync(filePath)) {
+              // Read as UTF-8 text and re-encode — matches Voltex TextEncoder hashing
+              const content = readFileSync(filePath, 'utf8');
+              const bytes = Buffer.from(content, 'utf8');
+              const hash = createHash('sha256').update(bytes).digest('base64');
+              plugin.integrity = \`sha256-\${hash}\`;
+              console.log(\`\${plugin.path}: sha256-\${hash}\`);
+            }
+          }
+
+          writeFileSync('voltex-registry.json', JSON.stringify(registry, null, 4) + '\n');
+          "
+
+      - name: Commit built files and updated registry
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add plugins/*/index.js
-          git diff --staged --quiet || git commit -m "chore: build plugins [skip ci]"
+          git add plugins/*/index.js voltex-registry.json
+          git diff --staged --quiet || git commit -m "chore: build plugins and update integrity hashes [skip ci]"
           git push
