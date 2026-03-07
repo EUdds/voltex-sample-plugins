@@ -7,6 +7,8 @@ on:
       - 'plugins/*/src/**'
       - 'build.mjs'
       - 'package.json'
+      - 'package-lock.json'
+  workflow_dispatch:
 
 jobs:
   build:
