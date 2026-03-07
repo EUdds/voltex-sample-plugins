@@ -1,6 +1,6 @@
 {
-    "name": "Voltex Sample Plugins",
-    "description": "Official sample plugins for the Voltex waveform viewer",
+    "name": "Voltex Plugin Registry Demo",
+    "description": "Demo to show how to make voltex plugin registeries",
     "plugins": [
         {
             "path": "plugins/notepad",
