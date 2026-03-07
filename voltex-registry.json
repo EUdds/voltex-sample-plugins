@@ -4,7 +4,8 @@
     "plugins": [
         {
             "path": "plugins/notepad",
-            "main": "dist/index.js"
+            "main": "dist/index.js",
+            "integrity": "sha256-mOOr9mCqvX7zELVnFoIscBJLHkdl+NJpEqhnR3kTOhI="
         }
     ]
 }
