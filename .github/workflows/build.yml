@@ -1,0 +1,34 @@
+name: Build plugins
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'plugins/*/src/**'
+      - 'build.mjs'
+      - 'package.json'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - run: npm install
+
+      - run: npm run build
+
+      - name: Commit built files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add plugins/*/index.js
+          git diff --staged --quiet || git commit -m "chore: build plugins [skip ci]"
+          git push
